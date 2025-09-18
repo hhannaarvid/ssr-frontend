@@ -6,6 +6,8 @@ defineProps({
   msg: String,
 })
 
+const title = ref('')
+const content = ref('')
 const docs = ref([])
 
 async function fetchDocs() { 
@@ -19,18 +21,39 @@ onMounted(() => {
     fetchDocs()
 })
 
+async function addOne() {
+    const response = await fetch('http://localhost:8080/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: title.value,
+        content: content.value
+      })
+    })
+    const newDoc = await response.json()
+    console.log('Nytt dokument:', newDoc)
+
+    docs.value.push({...newDoc, title: title.value, content: content.value})
+}
+
+
+
+title.value = ''
+content.value = ''
+
+
 </script>
 
 <template>
     <div class="create-form">
     <h2>Skapa nytt dokument</h2>
-        <form method="POST" action="/" class="new-doc">
+        <form @submit.prevent="addOne" class="new-doc">
             <label for="title">Titel</label>
-            <input type="text" name="title" />
+            <input v-model="title" type="text" id="title" name="title" />
 
 
             <label for="content">Innehåll</label>
-            <textarea name="content"></textarea>
+            <textarea v-model="content" id="content" name="content"></textarea>
 
             <input type="submit" value="Skapa" />
         </form>
@@ -50,6 +73,7 @@ onMounted(() => {
 .new-doc {
     display: flex;
     flex-direction: column;
+    border: 1px solid red;
 }
 
 input,
@@ -59,7 +83,9 @@ textarea {
     padding: 1.4rem;
 }
 
-ul {
+ol {
     text-decoration: none;
+    list-style-type: none;
+    border: 1px solid blue;
 }
 </style>
