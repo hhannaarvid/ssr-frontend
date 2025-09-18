@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Editor from '../components/Editor.vue'
-import Update from '../components/Update.vue'
+import Id from '../components/Id.vue'
 
 
 
@@ -12,8 +12,8 @@ const router = createRouter({
             component: Editor,
         },
         {
-            path: '/update',
-            component: Update,
+            path: '/id/:id',
+            component: Id,
         }
     ]
 })

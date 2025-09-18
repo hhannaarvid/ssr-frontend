@@ -5,8 +5,7 @@
 
 <template>
   <div id="nav">
-    <router-link to="/">Skapa</router-link> | 
-    <router-link to="/update">Uppdatera</router-link>
+    | <router-link to="/">Hem</router-link> | 
   </div>
   <div>
     <a href="https://vite.dev" target="_blank">
