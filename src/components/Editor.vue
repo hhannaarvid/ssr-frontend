@@ -1,11 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 
-
-defineProps({
-  msg: String,
-})
-
 const title = ref('')
 const content = ref('')
 const docs = ref([])
@@ -34,12 +29,13 @@ async function addOne() {
     console.log('Nytt dokument:', newDoc)
 
     docs.value.push({...newDoc, title: title.value, content: content.value})
+    title.value = ''
+    content.value = ''
 }
 
 
 
-title.value = ''
-content.value = ''
+
 
 
 </script>
@@ -62,7 +58,7 @@ content.value = ''
         <h2>Dokument</h2>
         <ol>
             <li v-for="(doc, index) in docs" :key="doc._id">
-                {{ doc.title }}
+                <router-link :to="`/id/${doc._id}`">{{ doc.title }}</router-link>
                 </li>
 
         </ol>
