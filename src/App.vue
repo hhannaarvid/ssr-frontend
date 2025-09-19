@@ -7,31 +7,56 @@
   <div id="nav">
     | <router-link to="/">Hem</router-link> | 
   </div>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="header">
+      <img src="/turtle2.png" class="logo" alt="turtle logo" />
+      <img src="/turtle2.png" class="logo" alt="turtle logo" />
+      <img src="/turtle2.png" class="logo" alt="turtle logo" />
+      <img src="/turtle2.png" class="logo" alt="turtle logo" />
+
+
+
   </div>
   <h1>SSR-editor</h1>
   <router-view />
+<div class="footer">
+  <a href="https://github.com/cobj24/ssr-editor" class="github-links">
+      <img src="/github.png" class="footer-logo" alt="turtle logo" />
+      <p>Backend repo.</p>
+      </a>
+      <a href="https://github.com/cobj24/ssr-editor" class="github-links">
+      <img src="/github.png" class="footer-logo" alt="turtle logo" />
+      <p>Frontend repo.</p>
+      </a>
 
+
+</div>
 </template>
 
 <style scoped>
+.header {
+  /* border: 1px solid red; */
+  background-color: rgb(231, 239, 231);
+}
+
 .logo {
   height: 6em;
-  padding: 1.5em;
+  padding: 0.5em 1em 0.5em 1em;
   will-change: filter;
   transition: filter 300ms;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+
+.footer-logo {
+  height: 2em;
+  /* border: 1px solid red; */
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+
+.footer {
+  display:flex;
+  justify-content: space-around;
+  background-color: rgb(231, 239, 231);
+  padding: 10px;
 }
 
 #nav {

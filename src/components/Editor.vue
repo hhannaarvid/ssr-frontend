@@ -69,7 +69,7 @@ async function addOne() {
 .new-doc {
     display: flex;
     flex-direction: column;
-    border: 1px solid red;
+    /* border: 1px solid red; */
 }
 
 input,
@@ -81,7 +81,19 @@ textarea {
 
 ul {
     text-decoration: none;
-    list-style-type: none;
-    border: 1px solid blue;
+    list-style: none;   
+    padding: 20px;
+    margin: 0;
+    text-align: center; 
+    /* border: 1px solid blue; */
+}
+
+ul a {
+    color: black;
+}
+
+ul a:hover {
+    color: rgb(169, 186, 169);
+    border-bottom: 1px solid rgb(169, 186, 169);
 }
 </style>
