@@ -6,10 +6,14 @@ const content = ref('')
 const docs = ref([])
 
 async function fetchDocs() { 
-    const response = await fetch("http://localhost:8080/");
+    const response = await fetch("http://localhost:8080/api/getAllDocs");
     const data = await response.json();
+    // const text = await response.text();
+
     docs.value = data
+    // console.log(text)
     console.log(data)
+
     }
 
 onMounted(() => {
@@ -17,7 +21,7 @@ onMounted(() => {
 })
 
 async function addOne() {
-    const response = await fetch('http://localhost:8080/', {
+    const response = await fetch('http://localhost:8080/api/addDocs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -32,10 +36,6 @@ async function addOne() {
     title.value = ''
     content.value = ''
 }
-
-
-
-
 
 
 </script>
@@ -56,12 +56,12 @@ async function addOne() {
     </div>
     <div class="doc-list">
         <h2>Dokument</h2>
-        <ol>
+        <ul>
             <li v-for="(doc, index) in docs" :key="doc._id">
                 <router-link :to="`/id/${doc._id}`">{{ doc.title }}</router-link>
                 </li>
 
-        </ol>
+        </ul>
     </div>
 </template>
 
@@ -79,7 +79,7 @@ textarea {
     padding: 1.4rem;
 }
 
-ol {
+ul {
     text-decoration: none;
     list-style-type: none;
     border: 1px solid blue;

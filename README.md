@@ -5,3 +5,6 @@ It's a project for the course "JavaScript-baserade webbramverk" held at Blekinge
 
 ## To run app
 ```npm run dev```
+
+<!-- run backend
+```node app.mjs``` -->

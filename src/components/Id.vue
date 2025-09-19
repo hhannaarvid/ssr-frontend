@@ -1,12 +1,15 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const title = ref('')
 const content = ref('')
+const id = ref('')
 
 // hämta id från sökvägen
 const route = useRoute()
+const router = useRouter()
+
 const doc = ref(null)
 
 //hämta dokument
@@ -17,7 +20,9 @@ async function getDocument() {
     
     title.value = doc.value.title
     content.value = doc.value.content
-    // console.log(doc.title.value)
+    id.value = route.params.id
+    // console.log(doc.title.value) -- för felsök
+    // console.log(id.value) -- för felsök
 }
 
 onMounted(() => {
@@ -25,13 +30,33 @@ onMounted(() => {
 })
 
 // funktion för att uppdatera dokument
+async function updateOne() {
+
+    const response = await fetch('http://localhost:8080/api/update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: id.value,       
+        title: title.value,
+        content: content.value 
+      })
+    })
+
+    // const result = await response.json() -- för felsök
+    // console.log('Uppdaterat dokument:', result) -- för felsök
+    if (response.ok) {
+        console.log('Dokument', title.value, 'är uppdaterat.')
+        router.push('/')
+    }
+    
+}
 
 </script>
 
 <template>
     <div class="create-form">
     <h2>Uppdatera dokument</h2>
-        <form class="new-doc">
+        <form @submit.prevent="updateOne" class="new-doc">
             <label for="title">Titel</label>
             <input v-model="title" type="text" id="title" name="title" />
 
