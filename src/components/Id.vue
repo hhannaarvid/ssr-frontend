@@ -62,7 +62,7 @@ async function updateOne() {
 
 
             <label for="content">Innehåll</label>
-            <textarea v-model="content" id="content" name="content"></textarea>
+            <textarea v-model="content" id="content" name="content" rows="10"></textarea>
 
             <input type="submit" value="Uppdatera" />
         </form>

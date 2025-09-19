@@ -21,11 +21,9 @@
 <div class="footer">
   <a href="https://github.com/cobj24/ssr-editor" class="github-links">
       <img src="/github.png" class="footer-logo" alt="turtle logo" />
-      <p>Backend repo.</p>
       </a>
-      <a href="https://github.com/cobj24/ssr-editor" class="github-links">
+      <a href="https://github.com/hhannaarvid/ssr-frontend" class="github-links">
       <img src="/github.png" class="footer-logo" alt="turtle logo" />
-      <p>Frontend repo.</p>
       </a>
 
 
@@ -57,6 +55,10 @@
   justify-content: space-around;
   background-color: rgb(231, 239, 231);
   padding: 10px;
+}
+
+.github-links:hover {
+  color: #fff;
 }
 
 #nav {

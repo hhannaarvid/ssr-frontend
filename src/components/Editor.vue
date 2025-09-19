@@ -45,11 +45,11 @@ async function addOne() {
     <h2>Skapa nytt dokument</h2>
         <form @submit.prevent="addOne" class="new-doc">
             <label for="title">Titel</label>
-            <input v-model="title" type="text" id="title" name="title" />
+            <input v-model="title" type="text" id="title" name="title"/>
 
 
             <label for="content">Innehåll</label>
-            <textarea v-model="content" id="content" name="content"></textarea>
+            <textarea v-model="content" id="content" name="content" rows="10"></textarea>
 
             <input type="submit" value="Skapa" />
         </form>
@@ -79,10 +79,11 @@ textarea {
     padding: 1.4rem;
 }
 
+
 ul {
     text-decoration: none;
     list-style: none;   
-    padding: 20px;
+    padding: 20px 0 50px 0;
     margin: 0;
     text-align: center; 
     /* border: 1px solid blue; */
