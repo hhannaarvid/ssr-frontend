@@ -25,6 +25,7 @@ async function getDocument() {
     // console.log(id.value) -- för felsök
 }
 
+//hämtar dokument när sidan laddas
 onMounted(() => {
     getDocument()
 })

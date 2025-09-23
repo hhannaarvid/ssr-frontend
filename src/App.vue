@@ -62,7 +62,8 @@
 }
 
 #nav {
-  padding: 30px;
+  padding: 0 30px 10px 30px;
+  /* border: 1px solid red; */
 }
 
 #nav a {

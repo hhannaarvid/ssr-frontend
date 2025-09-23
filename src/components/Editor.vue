@@ -5,6 +5,7 @@ const title = ref('')
 const content = ref('')
 const docs = ref([])
 
+//hämta alla dokument
 async function fetchDocs() { 
     const response = await fetch("http://localhost:8080/api/getAllDocs");
     const data = await response.json();
@@ -16,10 +17,12 @@ async function fetchDocs() {
 
     }
 
+// hämtar dokument när sidan laddas
 onMounted(() => {
     fetchDocs()
 })
 
+// lägger till ett dokument
 async function addOne() {
     const response = await fetch('http://localhost:8080/api/addDocs', {
       method: 'POST',
@@ -30,7 +33,7 @@ async function addOne() {
       })
     })
     const newDoc = await response.json()
-    console.log('Nytt dokument:', newDoc)
+    console.log('Nytt dokument:', newDoc) // mest för felsök
 
     docs.value.push({...newDoc, title: title.value, content: content.value})
     title.value = ''
