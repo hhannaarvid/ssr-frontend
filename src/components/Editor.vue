@@ -1,13 +1,24 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 
+
+
 const title = ref('')
 const content = ref('')
 const docs = ref([])
 
+let apiURL = "";
+if (window.location.hostname === "localhost") {
+    apiURL = "http://localhost:8080";
+} else {
+    apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net/";
+}
+
 //hämta alla dokument
 async function fetchDocs() { 
-    const response = await fetch("http://localhost:8080/api/getAllDocs");
+    // const response = await fetch("http://localhost:8080/api/getAllDocs");
+    const response = await fetch(`${apiURL}/api/getAllDocs`);
+
     const data = await response.json();
     // const text = await response.text();
 
@@ -24,7 +35,9 @@ onMounted(() => {
 
 // lägger till ett dokument
 async function addOne() {
-    const response = await fetch('http://localhost:8080/api/addDocs', {
+    // const response = await fetch('http://localhost:8080/api/addDocs', {
+    const response = await fetch(`${apiURL}/api/addDocs`, {
+
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
