@@ -20,6 +20,7 @@ let apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsite
 async function fetchDocs() { 
     // const response = await fetch("http://localhost:8080/api/getAllDocs");
     const response = await fetch(`${apiURL}/api/getAllDocs`);
+    console.log(apiURL);
 
     const data = await response.json();
     // const text = await response.text();
