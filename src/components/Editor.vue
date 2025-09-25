@@ -7,7 +7,9 @@ const title = ref('')
 const content = ref('')
 const docs = ref([])
 
-let apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net/";
+// let apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net/";
+let apiURL = "http://localhost:8080";
+
 // if (window.location.hostname === "localhost") {
 //     apiURL = "http://localhost:8080";
 // } else {
