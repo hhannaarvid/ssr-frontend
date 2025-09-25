@@ -6,8 +6,8 @@ const title = ref('')
 const content = ref('')
 const id = ref('')
 
-// let apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net/";
-let apiURL = "http://localhost:8080";
+let apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net/";
+// let apiURL = "http://localhost:8080";
 // if (window.location.hostname === "localhost") {
 //     apiURL = "http://localhost:8080";
 // } else {
@@ -22,7 +22,7 @@ const doc = ref(null)
 
 //hämta dokument
 async function getDocument() {
-    const response = await fetch(`${apiURL}/${route.params.id}`)
+    const response = await fetch(`${apiURL}${route.params.id}`)
     console.log('id:', route.params.id)
     doc.value = await response.json()
     
@@ -41,7 +41,7 @@ onMounted(() => {
 // funktion för att uppdatera dokument
 async function updateOne() {
 
-    const response = await fetch(`${apiURL}/api/update`, {
+    const response = await fetch(`${apiURL}api/update`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
