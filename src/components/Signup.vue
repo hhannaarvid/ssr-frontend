@@ -26,6 +26,7 @@ async function addUser() {
 
     });
 
+    // kollar felmeddelande och o användaren redan finns så avbryts
     if (!response.ok) {
         const error = await response.json();
         console.log(error);
@@ -50,12 +51,6 @@ async function addUser() {
 
     // REDIRECT TILL LOGIN???
     } catch (err) {
-        // if (res.status === 400 && newUser === "Användaren finns redan.") {
-        //     message = "Användaren finns redan."
-        //     console.error("något gick fel: ", err)
-        // } else {
-            
-        // }
         console.error("något gick fel: ", err)
     }
 }

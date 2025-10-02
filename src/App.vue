@@ -5,6 +5,7 @@
 <template>
   <div id="nav">
     | <router-link to="/">Hem</router-link> | 
+    <router-link to="/login">Logga in</router-link> | 
      <router-link to="/addUser">Registrera</router-link> | 
 
   </div>
