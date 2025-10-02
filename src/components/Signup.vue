@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 
 const username = ref('')
 const password = ref('')
-let message = ref('')
+const message = ref('')
 
 let apiURL;
 if (window.location.hostname.includes("localhost")) {
@@ -28,27 +28,34 @@ async function addUser() {
 
     if (!response.ok) {
         const error = await response.json();
-        console.error("backend error: ", error);
-        return;
+        console.log(error);
+        if (response.status === 400 && error === "Användaren finns redan.") {
+            message.value = "Användaren finns redan."
+            console.error("backend error: ", error);
+            return;
+        } else {
+            console.error("backend error: ", error);
+            return;
+        }
+        
     }
 
-    console.log(`${apiURL}/api/signup`);
     console.log(username.value); // FELSÖK
     const newUser = await response.json()
 
-    if (newUser === "Användaren finns redan.") {
-        message = "Användaren finns redan."
-        console.log("Användaren finns redan.")
-    } else {
-        console.log('Ny användare:', newUser) 
-    }
     // mest för felsök
-
+    console.log('Ny användare:', newUser) 
     username.value = ''
     password.value = ''
 
     // REDIRECT TILL LOGIN???
     } catch (err) {
+        // if (res.status === 400 && newUser === "Användaren finns redan.") {
+        //     message = "Användaren finns redan."
+        //     console.error("något gick fel: ", err)
+        // } else {
+            
+        // }
         console.error("något gick fel: ", err)
     }
 }
