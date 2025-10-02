@@ -6,18 +6,18 @@ const title = ref('')
 const content = ref('')
 const id = ref('')
 
-let apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
+// let apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
 // let apiURL = "http://localhost:8080";
-// if (window.location.hostname === "localhost") {
-//     apiURL = "http://localhost:8080";
-// } else {
-//     apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
-// }
+let apiURL;
+if (window.location.hostname.includes("localhost")) {
+    apiURL = "http://localhost:8080";
+} else {
+    apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
+}
 
 // hämta id från sökvägen
 const route = useRoute()
 const router = useRouter()
-
 const doc = ref(null)
 
 //hämta dokument

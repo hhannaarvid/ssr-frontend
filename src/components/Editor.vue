@@ -1,20 +1,19 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 
-
-
 const title = ref('')
 const content = ref('')
 const docs = ref([])
 
-let apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
+// let apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
 // let apiURL = "http://localhost:8080";
+let apiURL;
 
-// if (window.location.hostname === "localhost") {
-//     apiURL = "http://localhost:8080";
-// } else {
-//     apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net/";
-// }
+if (window.location.hostname.includes("localhost")) {
+    apiURL = "http://localhost:8080";
+} else {
+    apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net/";
+}
 
 //hämta alla dokument
 async function fetchDocs() { 

@@ -1,0 +1,82 @@
+<script setup>
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+const username = ref('')
+const password = ref('')
+
+let apiURL;
+if (window.location.hostname.includes("localhost")) {
+    apiURL = "http://localhost:8080";
+} else {
+    apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
+}
+
+// lägger till en användare
+async function addUser() {
+    try {
+      const response = await fetch(`${apiURL}/api/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: username.value,
+        password: password.value
+      })
+
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        console.error("backend error: ", error);
+        return;
+    }
+
+    console.log(`${apiURL}/api/signup`);
+    console.log(username.value); // FELSÖK
+    const newUser = await response.json()
+    console.log('Ny användare:', newUser) // mest för felsök
+
+    username.value = ''
+    password.value = ''
+    } catch (err) {
+        console.error("något gick fel: ", err)
+    }
+}
+</script>
+
+<template>
+    <div class="signup-form">
+    <h2>Resgistrera ny användare</h2>
+        <form @submit.prevent="addUser" class="new-doc">
+            <label for="title">Användarnamn</label>
+            <input v-model="username" type="text" id="username" name="username" />
+
+
+            <label for="content">Lösenord</label>
+            <input v-model="password" id="password" name="password"></input>
+
+            <input class="submit" type="submit" value="Registrera" />
+        </form>
+    </div>
+
+
+</template>
+
+<style scoped>
+.new-doc {
+    display: flex;
+    flex-direction: column;
+    /* border: 1px solid red; */
+    padding: 10px;
+}
+
+input {
+    margin-bottom: 1.4rem;
+    font-size: 1rem;
+    padding: 1.4rem;
+    width: 40%;
+    margin: 10px auto;
+}
+
+
+</style>

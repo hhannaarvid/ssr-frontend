@@ -1,11 +1,12 @@
 <script setup>
-// import HelloWorld from './components/HelloWorld.vue'
 
 </script>
 
 <template>
   <div id="nav">
     | <router-link to="/">Hem</router-link> | 
+     <router-link to="/addUser">Registrera</router-link> | 
+
   </div>
   <div class="header">
       <img src="/turtle2.png" class="logo" alt="turtle logo" />
