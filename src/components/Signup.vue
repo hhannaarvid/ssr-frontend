@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 
 const username = ref('')
 const password = ref('')
+let message = ref('')
 
 let apiURL;
 if (window.location.hostname.includes("localhost")) {
@@ -34,10 +35,19 @@ async function addUser() {
     console.log(`${apiURL}/api/signup`);
     console.log(username.value); // FELSÖK
     const newUser = await response.json()
-    console.log('Ny användare:', newUser) // mest för felsök
+
+    if (newUser === "Användaren finns redan.") {
+        message = "Användaren finns redan."
+        console.log("Användaren finns redan.")
+    } else {
+        console.log('Ny användare:', newUser) 
+    }
+    // mest för felsök
 
     username.value = ''
     password.value = ''
+
+    // REDIRECT TILL LOGIN???
     } catch (err) {
         console.error("något gick fel: ", err)
     }
@@ -48,6 +58,7 @@ async function addUser() {
     <div class="signup-form">
     <h2>Resgistrera ny användare</h2>
         <form @submit.prevent="addUser" class="new-doc">
+            <p>{{ message }}</p>
             <label for="title">Användarnamn</label>
             <input v-model="username" type="text" id="username" name="username" />
 
