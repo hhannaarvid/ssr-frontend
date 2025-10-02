@@ -2,6 +2,8 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+const router = useRouter();
+
 const username = ref('')
 const password = ref('')
 const message = ref('')
@@ -29,16 +31,13 @@ async function addUser() {
     // kollar felmeddelande och o användaren redan finns så avbryts
     if (!response.ok) {
         const error = await response.json();
-        console.log(error);
-        if (response.status === 400 && error === "Användaren finns redan.") {
-            message.value = "Användaren finns redan."
-            console.error("backend error: ", error);
-            return;
+        if (response.status === 400 && error.error === "user-exists") {
+            message.value = "Användaren finns redan.";
         } else {
-            console.error("backend error: ", error);
+            message.value = error.message;
             return;
         }
-        
+        return;
     }
 
     console.log(username.value); // FELSÖK
@@ -49,7 +48,9 @@ async function addUser() {
     username.value = ''
     password.value = ''
 
-    // REDIRECT TILL LOGIN???
+    // REDIRECT TILL LOGIN
+    router.push('/login');
+    
     } catch (err) {
         console.error("något gick fel: ", err)
     }
@@ -62,11 +63,11 @@ async function addUser() {
         <form @submit.prevent="addUser" class="new-doc">
             <p>{{ message }}</p>
             <label for="title">Användarnamn</label>
-            <input v-model="username" type="text" id="username" name="username" />
+            <input v-model="username" type="text" id="username" name="username" required/>
 
 
             <label for="content">Lösenord</label>
-            <input v-model="password" id="password" name="password"></input>
+            <input v-model="password" type="password" id="password" name="password" required ></input>
 
             <input class="submit" type="submit" value="Registrera" />
         </form>
