@@ -37,6 +37,7 @@ async function loginUser () {
         } else {
             sessionStorage.setItem("token", data.token);
             // console.log(data.token)
+            window.dispatchEvent(new Event("login-change"));
             router.push("/");
         }
        

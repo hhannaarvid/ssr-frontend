@@ -1,13 +1,28 @@
 <script setup>
+import { ref, onMounted, onUnmounted } from "vue";
 
+const isLoggedIn = ref(!!sessionStorage.getItem("token"));
+
+function updateStatus(){
+  isLoggedIn.value= !!sessionStorage.getItem("token");
+}
+
+onMounted(() => {
+  updateStatus();
+  window.addEventListener("login-change", updateStatus);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("login-change", updateStatus);
+});
 </script>
 
 <template>
   <div id="nav">
-    | <router-link to="/">Hem</router-link> | 
-    <router-link to="/login">Logga in</router-link> | 
-     <router-link to="/addUser">Registrera</router-link> | 
-     <router-link to="/logout"> Logga ut </router-link>
+    <router-link v-if="isLoggedIn" to="/">Hem</router-link> | 
+    <router-link v-if="!isLoggedIn" to="/login">Logga in</router-link> | 
+     <router-link v-if="!isLoggedIn" to="/addUser">Registrera</router-link> | 
+     <router-link v-if="isLoggedIn" to="/logout"> Logga ut </router-link>
 
   </div>
   <div class="header">

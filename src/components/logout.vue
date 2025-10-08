@@ -6,8 +6,10 @@ const router = useRouter();
 
 
 function logout() {
-  sessionStorage.removeItem("token");
-  router.push("/login");
+    sessionStorage.removeItem("token");
+    window.dispatchEvent(new Event("login-change"));
+
+    router.push("/login");
 }
 
 onMounted(() => {

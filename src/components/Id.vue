@@ -8,6 +8,7 @@ const id = ref('')
 
 let apiURL;
 const token = sessionStorage.getItem('token');
+const email = ref('')
 
 if (window.location.hostname.includes("localhost")) {
     apiURL = "http://localhost:8080";
@@ -22,7 +23,7 @@ const doc = ref(null)
 
 //hämta dokument
 async function getDocument() {
-    console.log("JWT token:", token);
+    // console.log("JWT token:", token);
     const response = await fetch(`${apiURL}/${route.params.id}`, {
         method: 'GET',
         headers: {
@@ -30,14 +31,12 @@ async function getDocument() {
             'authorization': `Bearer ${token}`
         }
     })
-    console.log('id:', route.params.id)
+    // console.log('id:', route.params.id)
     doc.value = await response.json()
     
     title.value = doc.value.title
     content.value = doc.value.content
     id.value = route.params.id
-    // console.log(doc.title.value) -- för felsök
-    // console.log(id.value) -- för felsök
 }
 
 //hämtar dokument när sidan laddas
@@ -61,13 +60,27 @@ async function updateOne() {
       })
     })
 
-    // const result = await response.json() -- för felsök
-    // console.log('Uppdaterat dokument:', result) -- för felsök
     if (response.ok) {
         console.log('Dokument', title.value, 'är uppdaterat.')
         router.push('/')
     }
     
+}
+
+async function emailInvite(){
+    const response = await fetch(`${apiURL}/api/invite`, {
+        method: "POST",
+        headers: {
+            "content-type": "application/json",
+            "authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            email: email.value,
+            docId: "dokument-id"
+        })
+    })
+    const result = await response.json();
+    console.log(result);
 }
 
 </script>
@@ -84,6 +97,11 @@ async function updateOne() {
             <textarea v-model="content" id="content" name="content" rows="10"></textarea>
 
             <input type="submit" value="Uppdatera" />
+        </form>
+        <form @submit.prevent="emailInvite" class="new-doc">
+            <label for="invite">Bjud in någon att redigera dokumentet</label>
+            <input v-model="email" id="email" name="email"></input>
+            <input type="submit" value="Skicka Inbjudan"></input>
         </form>
     </div>
 </template>
