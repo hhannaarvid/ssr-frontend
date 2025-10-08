@@ -6,61 +6,79 @@ const title = ref('')
 const content = ref('')
 const id = ref('')
 
-let apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
-// let apiURL = "http://localhost:8080";
-// if (window.location.hostname === "localhost") {
-//     apiURL = "http://localhost:8080";
-// } else {
-//     apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
-// }
-
-// hämta id från sökvägen
+const doc = ref(null)
 const route = useRoute()
 const router = useRouter()
 
-const doc = ref(null)
+let apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
 
-//hämta dokument
 async function getDocument() {
-    const response = await fetch(`${apiURL}/${route.params.id}`)
-    console.log('id:', route.params.id)
-    doc.value = await response.json()
-    
-    title.value = doc.value.title
-    content.value = doc.value.content
-    id.value = route.params.id
-    // console.log(doc.title.value) -- för felsök
-    // console.log(id.value) -- för felsök
-}
-
-//hämtar dokument när sidan laddas
-onMounted(() => {
-    getDocument()
-})
-
-// funktion för att uppdatera dokument
-async function updateOne() {
-
-    const response = await fetch(`${apiURL}/api/update`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: id.value,       
-        title: title.value,
-        content: content.value 
-      })
+  const response = await fetch(`${apiURL}/graphql`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query: `
+        query GetDoc($id: ID!) {
+          document(id: $id) {
+            _id
+            title
+            content
+          }
+        }
+      `,
+      variables: {
+        id: route.params.id
+      }
     })
+  });
 
-    // const result = await response.json() -- för felsök
-    // console.log('Uppdaterat dokument:', result) -- för felsök
-    if (response.ok) {
-        console.log('Dokument', title.value, 'är uppdaterat.')
-        router.push('/')
-    }
-    
+  const json = await response.json();
+  doc.value = json.data.document;
+
+  title.value = doc.value.title;
+  content.value = doc.value.content;
+  id.value = doc.value._id;
 }
 
+async function updateOne() {
+  const response = await fetch(`${apiURL}/graphql`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query: `
+        mutation UpdateDoc($id: ID!, $input: DocumentInput!) {
+          updateDocument(id: $id, input: $input) {
+            _id
+            title
+            content
+          }
+        }
+      `,
+      variables: {
+        id: id.value,
+        input: {
+          title: title.value,
+          content: content.value
+        }
+      }
+    })
+  });
+
+  const json = await response.json();
+
+  if (json.data && json.data.updateDocument) {
+    console.log('Dokument', title.value, 'är uppdaterat.');
+    router.push('/');
+  } else {
+    console.error("Uppdatering misslyckades:", json);
+  }
+}
+
+onMounted(() => {
+  getDocument();
+});
 </script>
+
 
 <template>
     <div class="create-form">
