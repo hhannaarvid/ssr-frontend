@@ -5,8 +5,6 @@ const title = ref('')
 const content = ref('')
 const docs = ref([])
 
-// let apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
-// let apiURL = "http://localhost:8080";
 let apiURL;
 
 if (window.location.hostname.includes("localhost")) {
@@ -19,7 +17,7 @@ if (window.location.hostname.includes("localhost")) {
 async function fetchDocs() { 
     // const response = await fetch("http://localhost:8080/api/getAllDocs");
     const response = await fetch(`${apiURL}/api/getAllDocs`);
-    console.log(apiURL);
+    // console.log(apiURL);
 
     const data = await response.json();
     // const text = await response.text();
@@ -54,7 +52,6 @@ async function addOne() {
     title.value = ''
     content.value = ''
 }
-
 
 </script>
 

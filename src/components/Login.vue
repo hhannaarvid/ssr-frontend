@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 const username = ref('')
 const password = ref('')
 
+const router = useRouter();
 
 let apiURL;
 if (window.location.hostname.includes("localhost")) {
@@ -15,8 +16,38 @@ if (window.location.hostname.includes("localhost")) {
 
 //logga in användare
 async function loginUser () {
+    // skicka till /login i backend
+    try {
+        const response = await fetch(`${apiURL}/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            username: username.value,
+            password: password.value
+        })
+
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            const error = await response.json();
+            console.log(error)
+            return;
+        } else {
+            sessionStorage.setItem("token", data.token);
+            // console.log(data.token)
+            router.push("/");
+        }
+       
+    } catch (err) {
+        console.error("något gick fel: ", err)
+    }
+
     console.log("inloggad!")
     console.log(username.value, password.value)
+    // redirect till editor
+    
 }
 </script>
 
@@ -25,11 +56,11 @@ async function loginUser () {
     <h2>Logga in</h2>
         <form @submit.prevent="loginUser" class="new-doc">
             <label for="title">Logga in</label>
-            <input v-model="username" type="text" id="username" name="username" />
+            <input v-model="username" type="text" id="username" name="username" required/>
 
 
             <label for="content">Lösenord</label>
-            <input v-model="password" id="password" name="password"></input>
+            <input v-model="password" type="password" id="password" name="password" required></input>
 
             <input class="submit" type="submit" value="Logga in" />
         </form>

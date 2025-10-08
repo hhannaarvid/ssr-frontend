@@ -7,6 +7,7 @@
     | <router-link to="/">Hem</router-link> | 
     <router-link to="/login">Logga in</router-link> | 
      <router-link to="/addUser">Registrera</router-link> | 
+     <router-link to="/logout"> Logga ut </router-link>
 
   </div>
   <div class="header">
