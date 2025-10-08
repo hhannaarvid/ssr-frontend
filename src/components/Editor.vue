@@ -6,6 +6,7 @@ const content = ref('')
 const docs = ref([])
 
 let apiURL;
+const token = sessionStorage.getItem('token');
 
 if (window.location.hostname.includes("localhost")) {
     apiURL = "http://localhost:8080";
@@ -16,7 +17,13 @@ if (window.location.hostname.includes("localhost")) {
 //hämta alla dokument
 async function fetchDocs() { 
     // const response = await fetch("http://localhost:8080/api/getAllDocs");
-    const response = await fetch(`${apiURL}/api/getAllDocs`);
+    const response = await fetch(`${apiURL}/api/getAllDocs`, {
+        method: 'GET',
+        headers: {
+            'content-type': 'application/json',
+            'authorization': `Bearer ${token}`
+        }
+    });
     // console.log(apiURL);
 
     const data = await response.json();
@@ -39,16 +46,20 @@ async function addOne() {
     const response = await fetch(`${apiURL}/api/addDocs`, {
 
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+    },
       body: JSON.stringify({
         title: title.value,
         content: content.value
       })
     })
     const newDoc = await response.json()
-    console.log('Nytt dokument:', newDoc) // mest för felsök
+    // console.log('Nytt dokument:', newDoc) // mest för felsök
 
-    docs.value.push({...newDoc, title: title.value, content: content.value})
+    // docs.value.push({...newDoc, title: title.value, content: content.value})
+    docs.value.push(newDoc);
     title.value = ''
     content.value = ''
 }

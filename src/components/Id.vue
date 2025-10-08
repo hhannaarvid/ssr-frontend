@@ -6,9 +6,9 @@ const title = ref('')
 const content = ref('')
 const id = ref('')
 
-// let apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
-// let apiURL = "http://localhost:8080";
 let apiURL;
+const token = sessionStorage.getItem('token');
+
 if (window.location.hostname.includes("localhost")) {
     apiURL = "http://localhost:8080";
 } else {
@@ -22,7 +22,14 @@ const doc = ref(null)
 
 //hämta dokument
 async function getDocument() {
-    const response = await fetch(`${apiURL}/${route.params.id}`)
+    console.log("JWT token:", token);
+    const response = await fetch(`${apiURL}/${route.params.id}`, {
+        method: 'GET',
+        headers: {
+            'content-type': 'application/json',
+            'authorization': `Bearer ${token}`
+        }
+    })
     console.log('id:', route.params.id)
     doc.value = await response.json()
     
@@ -43,7 +50,10 @@ async function updateOne() {
 
     const response = await fetch(`${apiURL}/api/update`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+        headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+    },
       body: JSON.stringify({
         id: id.value,       
         title: title.value,
