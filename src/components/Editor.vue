@@ -35,10 +35,7 @@ async function fetchDocs() {
 
     }
 
-// hämtar dokument när sidan laddas
-onMounted(() => {
-    fetchDocs()
-})
+
 
 // lägger till ett dokument
 async function addOne() {
@@ -63,6 +60,11 @@ async function addOne() {
     title.value = ''
     content.value = ''
 }
+
+// hämtar dokument när sidan laddas
+onMounted(() => {
+    fetchDocs()
+})
 
 </script>
 

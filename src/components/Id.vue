@@ -10,16 +10,17 @@ let apiURL;
 const token = sessionStorage.getItem('token');
 const email = ref('')
 
+// hämta id från sökvägen
+const route = useRoute()
+const router = useRouter()
+const doc = ref(null)
+
 if (window.location.hostname.includes("localhost")) {
     apiURL = "http://localhost:8080";
 } else {
     apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
 }
 
-// hämta id från sökvägen
-const route = useRoute()
-const router = useRouter()
-const doc = ref(null)
 
 //hämta dokument
 async function getDocument() {
@@ -39,11 +40,6 @@ async function getDocument() {
     id.value = route.params.id
 }
 
-//hämtar dokument när sidan laddas
-onMounted(() => {
-    getDocument()
-})
-
 // funktion för att uppdatera dokument
 async function updateOne() {
 
@@ -51,7 +47,7 @@ async function updateOne() {
       method: 'POST',
         headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}` 
     },
       body: JSON.stringify({
         id: id.value,       
@@ -83,6 +79,10 @@ async function emailInvite(){
     console.log(result);
 }
 
+//hämtar dokument när sidan laddas
+onMounted(() => {
+    getDocument()
+})
 </script>
 
 <template>
