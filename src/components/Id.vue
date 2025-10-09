@@ -5,17 +5,26 @@ import { useRoute, useRouter } from 'vue-router'
 const title = ref('')
 const content = ref('')
 const id = ref('')
-
 const doc = ref(null)
 const route = useRoute()
 const router = useRouter()
+const token = sessionStorage.getItem('token');
+const email = ref('')
 
-let apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
+let apiURL;
+if (window.location.hostname.includes("localhost")) {
+    apiURL = "http://localhost:8080";
+} else {
+    apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
+}
+
 
 async function getDocument() {
   const response = await fetch(`${apiURL}/graphql`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json',
+        'authorization': `Bearer ${token}`
+     },
     body: JSON.stringify({
       query: `
         query GetDoc($id: ID!) {
@@ -43,7 +52,9 @@ async function getDocument() {
 async function updateOne() {
   const response = await fetch(`${apiURL}/graphql`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` 
+     },
     body: JSON.stringify({
       query: `
         mutation UpdateDoc($id: ID!, $input: DocumentInput!) {
@@ -74,9 +85,22 @@ async function updateOne() {
   }
 }
 
-onMounted(() => {
-  getDocument();
-});
+async function emailInvite(){
+    const response = await fetch(`${apiURL}/api/invite`, {
+        method: "POST",
+        headers: {
+            "content-type": "application/json",
+            "authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            email: email.value,
+            docId: "dokument-id"
+        })
+    })
+    const result = await response.json();
+    console.log(result);
+}
+
 </script>
 
 
@@ -92,6 +116,11 @@ onMounted(() => {
             <textarea v-model="content" id="content" name="content" rows="10"></textarea>
 
             <input type="submit" value="Uppdatera" />
+        </form>
+        <form @submit.prevent="emailInvite" class="new-doc">
+            <label for="invite">Bjud in någon att redigera dokumentet</label>
+            <input v-model="email" id="email" name="email"></input>
+            <input type="submit" value="Skicka Inbjudan"></input>
         </form>
     </div>
 </template>

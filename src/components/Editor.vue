@@ -5,12 +5,22 @@ const title = ref('');
 const content = ref('');
 const docs = ref([]);
 
-let apiURL = "http://localhost:8080";
+let apiURL;
+const token = sessionStorage.getItem('token');
+
+if (window.location.hostname.includes("localhost")) {
+    apiURL = "http://localhost:8080";
+} else {
+    apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net/";
+}
+
 
 async function fetchDocs() {
   const response = await fetch(`${apiURL}/graphql`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json",
+                'authorization': `Bearer ${token}`
+     },
     body: JSON.stringify({
       query: `
         query {
@@ -31,7 +41,9 @@ async function fetchDocs() {
 async function addOne() {
   const response = await fetch(`${apiURL}/graphql`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+     },
     body: JSON.stringify({
       query: `
         mutation AddDoc($input: DocumentInput!) {
@@ -61,6 +73,7 @@ async function addOne() {
 onMounted(() => {
   fetchDocs();
 });
+
 </script>
 
 <template>
