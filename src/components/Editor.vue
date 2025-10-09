@@ -1,9 +1,9 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue';
 
-const title = ref('')
-const content = ref('')
-const docs = ref([])
+const title = ref('');
+const content = ref('');
+const docs = ref([]);
 
 let apiURL;
 const token = sessionStorage.getItem('token');
@@ -14,57 +14,65 @@ if (window.location.hostname.includes("localhost")) {
     apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net/";
 }
 
-//hämta alla dokument
-async function fetchDocs() { 
-    // const response = await fetch("http://localhost:8080/api/getAllDocs");
-    const response = await fetch(`${apiURL}/api/getAllDocs`, {
-        method: 'GET',
-        headers: {
-            'content-type': 'application/json',
-            'authorization': `Bearer ${token}`
+
+async function fetchDocs() {
+  const response = await fetch(`${apiURL}/graphql`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json",
+                'authorization': `Bearer ${token}`
+     },
+    body: JSON.stringify({
+      query: `
+        query {
+          documents {
+            _id
+            title
+            content
+          }
         }
-    });
-    // console.log(apiURL);
-
-    const data = await response.json();
-    // const text = await response.text();
-
-    docs.value = data
-    // console.log(text)
-    console.log(data)
-
-    }
-
-
-
-// lägger till ett dokument
-async function addOne() {
-    // const response = await fetch('http://localhost:8080/api/addDocs', {
-    const response = await fetch(`${apiURL}/api/addDocs`, {
-
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-    },
-      body: JSON.stringify({
-        title: title.value,
-        content: content.value
-      })
+      `
     })
-    const newDoc = await response.json()
-    // console.log('Nytt dokument:', newDoc) // mest för felsök
+  });
 
-    // docs.value.push({...newDoc, title: title.value, content: content.value})
-    docs.value.push(newDoc);
-    title.value = ''
-    content.value = ''
+  const json = await response.json();
+  docs.value = json.data.documents;
 }
 
-// hämtar dokument när sidan laddas
+async function addOne() {
+  const response = await fetch(`${apiURL}/graphql`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+     },
+    body: JSON.stringify({
+      query: `
+        mutation AddDoc($input: DocumentInput!) {
+          addDocument(input: $input) {
+            _id
+            title
+            content
+          }
+        }
+      `,
+      variables: {
+        input: {
+          title: title.value,
+          content: content.value
+        }
+      }
+    })
+  });
+
+  const json = await response.json();
+  const newDoc = json.data.addDocument;
+  docs.value.push(newDoc);
+  title.value = '';
+  content.value = '';
+}
+
 onMounted(() => {
-    fetchDocs()
-})
+  fetchDocs();
+});
 
 </script>
 

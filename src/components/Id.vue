@@ -5,16 +5,13 @@ import { useRoute, useRouter } from 'vue-router'
 const title = ref('')
 const content = ref('')
 const id = ref('')
-
-let apiURL;
+const doc = ref(null)
+const route = useRoute()
+const router = useRouter()
 const token = sessionStorage.getItem('token');
 const email = ref('')
 
-// hämta id från sökvägen
-const route = useRoute()
-const router = useRouter()
-const doc = ref(null)
-
+let apiURL;
 if (window.location.hostname.includes("localhost")) {
     apiURL = "http://localhost:8080";
 } else {
@@ -22,45 +19,70 @@ if (window.location.hostname.includes("localhost")) {
 }
 
 
-//hämta dokument
 async function getDocument() {
-    // console.log("JWT token:", token);
-    const response = await fetch(`${apiURL}/${route.params.id}`, {
-        method: 'GET',
-        headers: {
-            'content-type': 'application/json',
-            'authorization': `Bearer ${token}`
+  const response = await fetch(`${apiURL}/graphql`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json',
+        'authorization': `Bearer ${token}`
+     },
+    body: JSON.stringify({
+      query: `
+        query GetDoc($id: ID!) {
+          document(id: $id) {
+            _id
+            title
+            content
+          }
         }
+      `,
+      variables: {
+        id: route.params.id
+      }
     })
-    // console.log('id:', route.params.id)
-    doc.value = await response.json()
-    
-    title.value = doc.value.title
-    content.value = doc.value.content
-    id.value = route.params.id
+  });
+
+  const json = await response.json();
+  doc.value = json.data.document;
+
+  title.value = doc.value.title;
+  content.value = doc.value.content;
+  id.value = doc.value._id;
 }
 
-// funktion för att uppdatera dokument
 async function updateOne() {
-
-    const response = await fetch(`${apiURL}/api/update`, {
-      method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
+  const response = await fetch(`${apiURL}/graphql`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}` 
-    },
-      body: JSON.stringify({
-        id: id.value,       
-        title: title.value,
-        content: content.value 
-      })
+     },
+    body: JSON.stringify({
+      query: `
+        mutation UpdateDoc($id: ID!, $input: DocumentInput!) {
+          updateDocument(id: $id, input: $input) {
+            _id
+            title
+            content
+          }
+        }
+      `,
+      variables: {
+        id: id.value,
+        input: {
+          title: title.value,
+          content: content.value
+        }
+      }
     })
+  });
 
-    if (response.ok) {
-        console.log('Dokument', title.value, 'är uppdaterat.')
-        router.push('/')
-    }
-    
+  const json = await response.json();
+
+  if (json.data && json.data.updateDocument) {
+    console.log('Dokument', title.value, 'är uppdaterat.');
+    router.push('/');
+  } else {
+    console.error("Uppdatering misslyckades:", json);
+  }
 }
 
 async function emailInvite(){
@@ -79,11 +101,8 @@ async function emailInvite(){
     console.log(result);
 }
 
-//hämtar dokument när sidan laddas
-onMounted(() => {
-    getDocument()
-})
 </script>
+
 
 <template>
     <div class="create-form">
