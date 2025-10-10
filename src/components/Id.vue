@@ -101,6 +101,9 @@ async function emailInvite(){
     console.log(result);
 }
 
+onMounted(() => {
+  getDocument();
+})
 </script>
 
 

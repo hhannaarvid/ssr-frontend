@@ -16,55 +16,41 @@ if (window.location.hostname.includes("localhost")) {
 
 
 async function fetchDocs() {
-  const response = await fetch(`${apiURL}/graphql`, {
+    const response = await fetch(`${apiURL}/graphql`, {
     method: "POST",
     headers: { "Content-Type": "application/json",
-                'authorization': `Bearer ${token}`
-     },
+              'authorization': `Bearer ${token}`
+    },
     body: JSON.stringify({
-      query: `
-        query {
-          documents {
-            _id
-            title
-            content
-          }
+    query: `
+      query {
+        documentsByUser {
+          _id
+          title
+          content
         }
-      `
+      }
+    `
     })
   });
 
   const json = await response.json();
-  docs.value = json.data.documents;
+  docs.value = json.data.documentsByUser;
 }
 
 async function addOne() {
-  const response = await fetch(`${apiURL}/graphql`, {
+  const response = await fetch(`${apiURL}/api/addDocs`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
      },
     body: JSON.stringify({
-      query: `
-        mutation AddDoc($input: DocumentInput!) {
-          addDocument(input: $input) {
-            _id
-            title
-            content
-          }
-        }
-      `,
-      variables: {
-        input: {
-          title: title.value,
-          content: content.value
-        }
-      }
+      title: title.value,
+      content: content.value
     })
   });
 
-  const json = await response.json();
-  const newDoc = json.data.addDocument;
+  const newDoc = await response.json();
   docs.value.push(newDoc);
   title.value = '';
   content.value = '';
