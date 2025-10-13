@@ -50,38 +50,21 @@ async function getDocument() {
 }
 
 async function updateOne() {
-  const response = await fetch(`${apiURL}/graphql`, {
+  const response = await fetch(`${apiURL}/api/update`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}` 
      },
     body: JSON.stringify({
-      query: `
-        mutation UpdateDoc($id: ID!, $input: DocumentInput!) {
-          updateDocument(id: $id, input: $input) {
-            _id
-            title
-            content
-          }
-        }
-      `,
-      variables: {
-        id: id.value,
-        input: {
-          title: title.value,
-          content: content.value
-        }
-      }
+      title: title.value,
+      content: title.value,
+      id: id.value
     })
   });
 
-  const json = await response.json();
-
-  if (json.data && json.data.updateDocument) {
-    console.log('Dokument', title.value, 'är uppdaterat.');
+  if (response.ok) {
+    console.log("Dokument uppdaterat!");
     router.push('/');
-  } else {
-    console.error("Uppdatering misslyckades:", json);
   }
 }
 
@@ -94,7 +77,7 @@ async function emailInvite(){
         },
         body: JSON.stringify({
             email: email.value,
-            docId: "dokument-id"
+            docId: id.value
         })
     })
     const result = await response.json();

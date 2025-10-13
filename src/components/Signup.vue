@@ -3,11 +3,13 @@ import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter();
-
+const route = useRoute();
 const username = ref('')
 const password = ref('')
 const message = ref('')
 const email = ref('')
+const inviteToken = ref('')
+inviteToken.value = route.query.invite || null;
 
 
 let apiURL;
@@ -26,7 +28,8 @@ async function addUser() {
       body: JSON.stringify({
         username: username.value,
         password: password.value,
-        email: email.value
+        email: email.value,
+        inviteToken: inviteToken.value || null,
       })
 
     });
