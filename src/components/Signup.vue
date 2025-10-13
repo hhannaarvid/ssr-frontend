@@ -7,6 +7,8 @@ const router = useRouter();
 const username = ref('')
 const password = ref('')
 const message = ref('')
+const email = ref('')
+
 
 let apiURL;
 if (window.location.hostname.includes("localhost")) {
@@ -23,7 +25,8 @@ async function addUser() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         username: username.value,
-        password: password.value
+        password: password.value,
+        email: email.value
       })
 
     });
@@ -47,6 +50,8 @@ async function addUser() {
     console.log('Ny användare:', newUser) 
     username.value = ''
     password.value = ''
+    email.value = ''
+
 
     // REDIRECT TILL LOGIN
     router.push('/login');
@@ -64,9 +69,11 @@ async function addUser() {
             <p>{{ message }}</p>
             <label for="title">Användarnamn</label>
             <input v-model="username" type="text" id="username" name="username" required/>
+            
+            <label for="email">E-post</label>
+            <input v-model="email" type="email" id="email" name="email" required ></input>
 
-
-            <label for="content">Lösenord</label>
+            <label for="password">Lösenord</label>
             <input v-model="password" type="password" id="password" name="password" required ></input>
 
             <input class="submit" type="submit" value="Registrera" />
