@@ -66,20 +66,22 @@ function openSocket() {
   socket.value.on('connect', () => {
     console.log('connected socket via frontend')
     socket.value.emit('joint-document', id.value)
-    console.log("id.value frontend:", id.value)
+    // console.log("id.value frontend:", id.value)
   })
 
-  socket.value.on('receive-changes', (newContent) => {
+  socket.value.on('receive-changes', ({ content: newContent, title: newTitle }) => {
     isRemoteUpdate.value = true
     content.value = newContent
+    title.value = newTitle
     isRemoteUpdate.value = false
   })
 
-watch(content, (newValue) => {
-  if (socket.value && newValue && !isRemoteUpdate.value) {
-    socket.value.emit("send-changes", { docId: id.value, content: newValue})
+watch([title, content], ([newTitle, newValue]) => {
+  if (socket.value && !isRemoteUpdate.value) {
+    socket.value.emit("send-changes", { docId: id.value, content: newValue, title: newTitle})
   }
 })
+
   // socket
 }
 

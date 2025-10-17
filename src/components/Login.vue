@@ -45,8 +45,7 @@ async function loginUser () {
         console.error("något gick fel: ", err)
     }
 
-    console.log("inloggad!")
-    console.log(username.value, password.value)
+    console.log("Du är inloggad som:", username.value)
     // redirect till editor
     
 }
