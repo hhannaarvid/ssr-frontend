@@ -56,7 +56,7 @@ async function getDocument() {
 
 function openSocket() {
       // socket
-  console.log(token)
+  // console.log(token)
   socket.value = io(apiURL, {
   auth: {
     token
@@ -124,7 +124,6 @@ async function emailInvite(){
 onMounted( async () => {
   await getDocument();
   openSocket();
-
 });
 
 
