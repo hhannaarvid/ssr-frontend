@@ -1,9 +1,10 @@
 <script setup>
-import { onMounted, ref, watch, nextTick } from 'vue'
+import { onMounted, onUnmounted, ref, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { io } from "socket.io-client"
 
 import { EditorView } from '@codemirror/view'
-import { basicSetup } from "codemirror";
+import { basicSetup } from "codemirror"
 import { javascript } from '@codemirror/lang-javascript'
 import { EditorState } from '@codemirror/state'
 
@@ -13,27 +14,30 @@ const id = ref('')
 const doc = ref(null)
 const route = useRoute()
 const router = useRouter()
-const token = sessionStorage.getItem('token');
+const token = sessionStorage.getItem('token')
 const email = ref('')
 const docType = ref('text')
 const output = ref('')
 const editor = ref(null)
 let codeView = null
 
-let apiURL;
+const socket = ref(null)
+const isRemoteUpdate = ref(false)
+
+let apiURL
 if (window.location.hostname.includes("localhost")) {
-  apiURL = "http://localhost:8080";
+  apiURL = "http://localhost:8080"
 } else {
-  apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net";
+  apiURL = "https://jsramverk-hoc-a2fwfbeecrhdfkhr.northeurope-01.azurewebsites.net"
 }
 
-// WATCH: Kör om man växlar typ till 'code'
+// Kör init av kodeditor vid byte till 'code'
 watch(docType, async (newType) => {
   if (newType === 'code') {
-    await nextTick();
-    initCodeEditor();
+    await nextTick()
+    initCodeEditor()
   }
-});
+})
 
 async function getDocument() {
   const response = await fetch(`${apiURL}/graphql`, {
@@ -67,29 +71,59 @@ async function getDocument() {
   docType.value = doc.value.type || 'text'
 
   if (docType.value === 'code') {
-    await nextTick(); // säkerställ att DOM är uppdaterad
+    await nextTick()
     initCodeEditor()
   }
 }
 
 function initCodeEditor() {
-  if (!editor.value) return;
+  if (!editor.value) return
 
   if (codeView) {
-    codeView.destroy();             // stäng ned föregående instans
-    codeView = null;
-    editor.value.innerHTML = '';    // rensa DOM-innehåll
+    codeView.destroy()
+    codeView = null
+    editor.value.innerHTML = ''
   }
 
   const startState = EditorState.create({
     doc: content.value,
     extensions: [basicSetup, javascript()]
-  });
+  })
 
   codeView = new EditorView({
     state: startState,
     parent: editor.value
-  });
+  })
+}
+
+function openSocket() {
+  socket.value = io(apiURL, {
+    auth: {
+      token
+    }
+  })
+
+  socket.value.on('connect', () => {
+    console.log('connected socket via frontend')
+    socket.value.emit('joint-document', id.value)
+  })
+
+  socket.value.on('receive-changes', ({ content: newContent, title: newTitle }) => {
+    isRemoteUpdate.value = true
+    content.value = newContent
+    title.value = newTitle
+    isRemoteUpdate.value = false
+  })
+
+  watch([title, content], ([newTitle, newValue]) => {
+    if (socket.value && !isRemoteUpdate.value) {
+      socket.value.emit("send-changes", {
+        docId: id.value,
+        content: newValue,
+        title: newTitle
+      })
+    }
+  })
 }
 
 async function updateOne() {
@@ -134,15 +168,15 @@ async function emailInvite() {
 }
 
 async function runCode() {
-  const codeToRun = codeView?.state?.doc?.toString() || '';
-  console.log("Kod som skickas:", codeToRun);
+  const codeToRun = codeView?.state?.doc?.toString() || ''
+  console.log("Kod som skickas:", codeToRun)
 
   if (!codeToRun.trim()) {
-    output.value = "Ingen kod att köra!";
-    return;
+    output.value = "Ingen kod att köra!"
+    return
   }
 
-  const base64Code = btoa(codeToRun);
+  const base64Code = btoa(codeToRun)
 
   try {
     const response = await fetch("https://execjs.emilfolino.se/code", {
@@ -151,34 +185,38 @@ async function runCode() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ code: base64Code })
-    });
+    })
 
-    const result = await response.json();
-    console.log("Svar från execjs:", result);
+    const result = await response.json()
+    console.log("Svar från execjs:", result)
 
     if (result.data) {
       try {
-        const decoded = atob(result.data);
-        output.value = decoded;
-        console.log("Decoded output:", decoded);
+        const decoded = atob(result.data)
+        output.value = decoded
+        console.log("Decoded output:", decoded)
       } catch (e) {
-        output.value = "Fel vid avkodning.";
-        console.error("Base64-dekodningsfel:", e);
+        output.value = "Fel vid avkodning."
+        console.error("Base64-dekodningsfel:", e)
       }
     } else if (result.error) {
-      output.value = "Fel från servern: " + result.error;
+      output.value = "Fel från servern: " + result.error
     } else {
-      output.value = "Ingen output från servern.";
+      output.value = "Ingen output från servern."
     }
-
   } catch (err) {
-    output.value = "Nätverksfel eller servern svarar inte.";
-    console.error(err);
+    output.value = "Nätverksfel eller servern svarar inte."
+    console.error(err)
   }
 }
 
-onMounted(() => {
-  getDocument()
+onMounted(async () => {
+  await getDocument()
+  openSocket()
+})
+
+onUnmounted(() => {
+  if (socket.value) socket.value.disconnect()
 })
 </script>
 
@@ -266,5 +304,4 @@ textarea {
   white-space: pre-wrap;
   font-size: 1rem;
 }
-
 </style>
